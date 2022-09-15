@@ -60,6 +60,32 @@ function main() {
     gl.clearColor(1.0, 0.65, 0.0, 1.0);
     gl.clear(gl.COLOR_BUFFER_BIT);
   
+}
+
+function getPointOnBezierCurve(points, offset, t) {
+  const invT = 1 - t;
+  return v2.add(
+    v2.mult(points[offset + 0], invT * invT * invT),
+    v2.mult(points[offset + 1], 3 * t * invT * invT),
+    v2.mult(points[offset + 2], 3 * invT * t * t),
+    v2.mult(points[offset + 3], t * t * t)
+  );
+}
+
+function getPointsOnBezierCurve(points, offset, numPoints) {
+  let cpoints = [];
+  for (let i = 0; i < numPoints; ++i) {
+    const t = i / (numPoints - 1);
+    cpoints.push(getPointOnBezierCurve(points, offset, t));
+  }
+
+  cpoints = cpoints.reduce((a, b) => {
+    return a.concat(b);
+  }, []);
+
+  return cpoints;
+}
+
 const v2 = (function () {
   // adds 1 or more v2s
   function add(a, ...args) {
