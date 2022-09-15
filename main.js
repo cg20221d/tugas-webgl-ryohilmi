@@ -60,6 +60,33 @@ function main() {
     gl.clearColor(1.0, 0.65, 0.0, 1.0);
     gl.clear(gl.COLOR_BUFFER_BIT);
   
-    gl.drawArrays(gl.LINE_STRIP, 0, 4);
+const v2 = (function () {
+  // adds 1 or more v2s
+  function add(a, ...args) {
+    const n = a.slice();
+    [...args].forEach((p) => {
+      n[0] += p[0];
+      n[1] += p[1];
+    });
+    return n;
   }
-  
+
+  function mult(a, s) {
+    if (Array.isArray(s)) {
+      let t = s;
+      s = a;
+      a = t;
+    }
+    if (Array.isArray(s)) {
+      return [a[0] * s[0], a[1] * s[1]];
+    } else {
+      return [a[0] * s, a[1] * s];
+    }
+  }
+
+
+  return {
+    add: add,
+    mult: mult,
+  };
+})();
