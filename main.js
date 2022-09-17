@@ -171,19 +171,51 @@ function main() {
     ],
   ];
 
-  let newA = [];
+  var characters = [];
 
-  a.forEach((x) => {
-    let oper = (val) => val - 0.4;
-    newA.push([oper(x[0]), x[1]]);
+  transformChar(letterH, (point) => {
+    point[0] = (point[0] - 0.9) / 1.9;
+    point[1] = (point[1] - 0.9) / 1.9;
+    return point;
   });
 
-  console.log(newA);
+  transformChar(number2, (point) => {
+    point[0] = (point[0] + 0.65) / 1.75;
+    point[1] = (point[1] + 0.9) / 1.75;
+    return point;
+  });
+
+  transformChar(number9, (point) => {
+    point[0] = (point[0] - 0.8) / 1.65;
+    point[1] = (point[1] + 0.85) / 1.65;
+    return point;
+  });
+
+  transformChar(letterO, (point) => {
+    point[0] = (point[0] + 0.6) / 1.6;
+    point[1] = (point[1] - 0.9) / 1.9;
+    return point;
+  });
+
+  function transformChar(char, transformation) {
+    char.forEach((x) => {
+      let newA = [];
+      x.forEach((y) => {
+        let c = [];
+        y.forEach((z) => {
+          c.push(transformation(z));
+        });
+        newA.push(c);
+      });
+
+      characters.push(newA);
+    });
+  }
 
   let vertices = [];
   let numPoints = 50;
 
-  segments.forEach((segment, i) => {
+  characters.forEach((segment, i) => {
     let outerVertices = getPointsOnBezierCurve(segment[0], 0, numPoints);
     let innerVertices = getPointsOnBezierCurve(segment[1], 0, numPoints);
 
@@ -246,7 +278,7 @@ function main() {
   gl.clearColor(1.0, 0.65, 0.0, 1.0);
   gl.clear(gl.COLOR_BUFFER_BIT);
 
-  for (let i = 0; i < segments.length; i++) {
+  for (let i = 0; i < characters.length; i++) {
     gl.drawArrays(gl.TRIANGLE_STRIP, numPoints * i * 2, numPoints * 2);
   }
 }
