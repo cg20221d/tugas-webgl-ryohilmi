@@ -233,9 +233,11 @@ function main() {
 
   // Vertex shader
   const vertexShaderCode = `
+      varying vec2 pos;
       attribute vec2 aPosition;
   
       void main() {
+        pos = aPosition;
         float x = aPosition.x;
         float y = aPosition.y;
         gl_PointSize = 10.0;
@@ -246,10 +248,16 @@ function main() {
   // Fragment shader
   const fragmentShaderCode = `
       precision mediump float;
+      varying vec2 pos;
+
+      float map(float value, float min1, float max1, float min2, float max2) {
+        return min2 + (value - min1) * (max2 - min2) / (max1 - min1);
+      }
+
       void main() {
-        float r = 0.0;
-        float g = 0.0;
-        float b = 1.0;   
+        float r = map(pos.x + (pos.y * 0.2) + 0.8, 0.0, 1.5, 0.1, 0.36);
+        float g = map(pos.x + (pos.y * 0.2) + 0.8, 0.0, 1.5, 0.92, 0.47);
+        float b = map(pos.x + (pos.y * 0.2) + 0.8, 0.0, 1.5, 0.85, 0.92);   
         gl_FragColor = vec4(r, g, b, 1.0);
       }
     `;
@@ -275,7 +283,7 @@ function main() {
   gl.vertexAttribPointer(aPosition, 2, gl.FLOAT, false, 0, 0);
   gl.enableVertexAttribArray(aPosition);
 
-  gl.clearColor(1.0, 0.65, 0.0, 1.0);
+  gl.clearColor(0.13, 0.1, 0.25, 1.0);
   gl.clear(gl.COLOR_BUFFER_BIT);
 
   for (let i = 0; i < characters.length; i++) {
