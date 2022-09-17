@@ -8,4 +8,4 @@
 
 Hasil:
 
-![Hasil](https://cdn.discordapp.com/attachments/755737092507566270/1020538649370181723/unknown.png)
+![Hasil](https://cdn.discordapp.com/attachments/755737092507566270/1020652772946886726/unknown.png)
