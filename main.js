@@ -235,11 +235,12 @@ function main() {
   const vertexShaderCode = `
       varying vec2 pos;
       attribute vec2 aPosition;
+      uniform bool isShadow;
   
       void main() {
         pos = aPosition;
-        float x = aPosition.x;
-        float y = aPosition.y;
+        float x = isShadow ? aPosition.x : aPosition.x + 0.02;
+        float y = isShadow ? aPosition.y : aPosition.y - 0.02;
         gl_PointSize = 10.0;
         gl_Position = vec4(x, y, 0.0, 1.0);
       }
@@ -249,15 +250,16 @@ function main() {
   const fragmentShaderCode = `
       precision mediump float;
       varying vec2 pos;
+      uniform bool isShadow;
 
       float map(float value, float min1, float max1, float min2, float max2) {
         return min2 + (value - min1) * (max2 - min2) / (max1 - min1);
       }
 
       void main() {
-        float r = map(pos.x + (pos.y * 0.2) + 0.8, 0.0, 1.5, 0.1, 0.36);
-        float g = map(pos.x + (pos.y * 0.2) + 0.8, 0.0, 1.5, 0.92, 0.47);
-        float b = map(pos.x + (pos.y * 0.2) + 0.8, 0.0, 1.5, 0.85, 0.92);   
+        float r = isShadow ? map(pos.x + (pos.y * 0.2) + 0.8, 0.0, 1.5, 0.1, 0.36) : 0.0;
+        float g = isShadow ? map(pos.x + (pos.y * 0.2) + 0.8, 0.0, 1.5, 0.92, 0.47) : 0.0;
+        float b = isShadow ? map(pos.x + (pos.y * 0.2) + 0.8, 0.0, 1.5, 0.85, 0.92) : 0.0;   
         gl_FragColor = vec4(r, g, b, 1.0);
       }
     `;
@@ -283,9 +285,17 @@ function main() {
   gl.vertexAttribPointer(aPosition, 2, gl.FLOAT, false, 0, 0);
   gl.enableVertexAttribArray(aPosition);
 
+  let locationOfIsShadow = gl.getUniformLocation(shaderProgram, "isShadow");
+
   gl.clearColor(0.13, 0.1, 0.25, 1.0);
   gl.clear(gl.COLOR_BUFFER_BIT);
 
+  gl.uniform1f(locationOfIsShadow, false);
+  for (let i = 0; i < characters.length; i++) {
+    gl.drawArrays(gl.TRIANGLE_STRIP, numPoints * i * 2, numPoints * 2);
+  }
+
+  gl.uniform1f(locationOfIsShadow, true);
   for (let i = 0; i < characters.length; i++) {
     gl.drawArrays(gl.TRIANGLE_STRIP, numPoints * i * 2, numPoints * 2);
   }
