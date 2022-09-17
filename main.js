@@ -239,8 +239,8 @@ function main() {
   
       void main() {
         pos = aPosition;
-        float x = isShadow ? aPosition.x : aPosition.x + 0.02;
-        float y = isShadow ? aPosition.y : aPosition.y - 0.02;
+        float x = isShadow ? aPosition.x + 0.02 : aPosition.x;
+        float y = isShadow ? aPosition.y - 0.02 : aPosition.y;
         gl_PointSize = 10.0;
         gl_Position = vec4(x, y, 0.0, 1.0);
       }
@@ -257,10 +257,11 @@ function main() {
       }
 
       void main() {
-        float r = isShadow ? map(pos.x + (pos.y * 0.2) + 0.8, 0.0, 1.5, 0.1, 0.36) : 0.0;
-        float g = isShadow ? map(pos.x + (pos.y * 0.2) + 0.8, 0.0, 1.5, 0.92, 0.47) : 0.0;
-        float b = isShadow ? map(pos.x + (pos.y * 0.2) + 0.8, 0.0, 1.5, 0.85, 0.92) : 0.0;   
-        gl_FragColor = vec4(r, g, b, 1.0);
+        float r = isShadow ? 0.05 : map(pos.x + (pos.y * 0.2) + 0.8, 0.0, 1.5, 0.1, 0.36);
+        float g = isShadow ? 0.035 : map(pos.x + (pos.y * 0.2) + 0.8, 0.0, 1.5, 0.92, 0.47);
+        float b = isShadow ? 0.09 : map(pos.x + (pos.y * 0.2) + 0.8, 0.0, 1.5, 0.85, 0.92); 
+        float a = isShadow ? 1.0 : 1.0;  
+        gl_FragColor = vec4(r, g, b, a);
       }
     `;
 
@@ -290,12 +291,12 @@ function main() {
   gl.clearColor(0.13, 0.1, 0.25, 1.0);
   gl.clear(gl.COLOR_BUFFER_BIT);
 
-  gl.uniform1f(locationOfIsShadow, false);
+  gl.uniform1f(locationOfIsShadow, true);
   for (let i = 0; i < characters.length; i++) {
     gl.drawArrays(gl.TRIANGLE_STRIP, numPoints * i * 2, numPoints * 2);
   }
 
-  gl.uniform1f(locationOfIsShadow, true);
+  gl.uniform1f(locationOfIsShadow, false);
   for (let i = 0; i < characters.length; i++) {
     gl.drawArrays(gl.TRIANGLE_STRIP, numPoints * i * 2, numPoints * 2);
   }
