@@ -171,23 +171,23 @@ function main() {
     ],
   ];
 
-  var characters = [];
+  var segments = [];
 
-  transformChar(letterH, (point) => {
-    point[0] = (point[0] - 0.9) / 1.9;
-    point[1] = (point[1] - 0.9) / 1.9;
+  transformChar(number9, (point) => {
+    point[0] = (point[0] - 0.75) / 1.55;
+    point[1] = (point[1] + 0.825) / 1.55;
     return point;
   });
 
   transformChar(number2, (point) => {
-    point[0] = (point[0] + 0.65) / 1.75;
-    point[1] = (point[1] + 0.9) / 1.75;
+    point[0] = (point[0] + 0.65) / 1.65;
+    point[1] = (point[1] + 0.9) / 1.65;
     return point;
   });
 
-  transformChar(number9, (point) => {
-    point[0] = (point[0] - 0.8) / 1.65;
-    point[1] = (point[1] + 0.85) / 1.65;
+  transformChar(letterH, (point) => {
+    point[0] = (point[0] - 0.9) / 1.9;
+    point[1] = (point[1] - 0.9) / 1.9;
     return point;
   });
 
@@ -208,14 +208,15 @@ function main() {
         newA.push(c);
       });
 
-      characters.push(newA);
+      segments.push(newA);
     });
   }
 
   let vertices = [];
   let numPoints = 50;
+  let numberLength = number2.length + number9.length;
 
-  characters.forEach((segment, i) => {
+  segments.forEach((segment, j) => {
     let outerVertices = getPointsOnBezierCurve(segment[0], 0, numPoints);
     let innerVertices = getPointsOnBezierCurve(segment[1], 0, numPoints);
 
@@ -241,7 +242,6 @@ function main() {
         pos = aPosition;
         float x = isShadow ? aPosition.x + 0.02 : aPosition.x;
         float y = isShadow ? aPosition.y - 0.02 : aPosition.y;
-        gl_PointSize = 10.0;
         gl_Position = vec4(x, y, 0.0, 1.0);
       }
     `;
@@ -292,13 +292,17 @@ function main() {
   gl.clear(gl.COLOR_BUFFER_BIT);
 
   gl.uniform1f(locationOfIsShadow, true);
-  for (let i = 0; i < characters.length; i++) {
+  for (let i = numberLength; i < segments.length; i++) {
     gl.drawArrays(gl.TRIANGLE_STRIP, numPoints * i * 2, numPoints * 2);
   }
 
   gl.uniform1f(locationOfIsShadow, false);
-  for (let i = 0; i < characters.length; i++) {
-    gl.drawArrays(gl.TRIANGLE_STRIP, numPoints * i * 2, numPoints * 2);
+  for (let i = 0; i < segments.length; i++) {
+    gl.drawArrays(
+      i > segments.length / 2 ? gl.TRIANGLE_STRIP : gl.LINE_STRIP,
+      numPoints * i * 2,
+      numPoints * 2
+    );
   }
 }
 
